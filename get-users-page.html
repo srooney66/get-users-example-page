@@ -1,0 +1,104 @@
+<script>
+  const userData = null;
+  async function getUserData() {
+    try {
+      const response = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+      const users = await response.json();
+      // console.log(users);
+      return users;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  getUserData().then((data) => {
+    console.log('user data retrieved: ', data);
+    // add data to table
+    if (data.length > 0) {
+      data.forEach((user) => {
+        console.log('user: ', user);
+        // create new row
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
+        // append user data cells to row
+        // name
+        const usernameCell = document.createElement('div');
+        usernameCell.classList.add('cell');
+        usernameCell.appendChild(document.createTextNode(user.name));
+        newRow.appendChild(usernameCell);
+        // company
+        const companyNameCell = document.createElement('div');
+        companyNameCell.classList.add('cell');
+        companyNameCell.appendChild(document.createTextNode(user.company.name));
+        newRow.appendChild(companyNameCell);
+        // website link
+        const websiteCell = document.createElement('div');
+        websiteCell.classList.add('cell');
+        const websiteLink = document.createElement('a');
+        websiteLink.href = `https://${user.website}`;
+        websiteLink.text = user.website;
+        websiteLink.target = '_blank';
+        websiteCell.appendChild(websiteLink);
+        newRow.appendChild(websiteCell);
+        // append row to table
+        document.getElementById('user-table').appendChild(newRow);
+      });
+    } else {
+      // create new row
+      const newRow = document.createElement('div');
+      newRow.classList.add('row');
+      // append row to table
+      newRow.appendChild(document.createTextNode('No data found.'));
+      document.getElementById('user-table').appendChild(newRow);
+    }
+    document.getElementsByClassName('loading')[0].classList.add('hidden');
+  });
+</script>
+
+<style>
+  .body {
+    width: 100%;
+  }
+  #user-table {
+    width: 90%;
+    margin: 0 auto;
+    border: solid black 1px;
+    padding: 5px 20px;
+  }
+  #user-table .row {
+    width: 100%;
+    display: flex;
+    padding: 5px;
+    border-top: solid black 1px;
+  }
+  #user-table .top-row {
+    width: 100%;
+    display: flex;
+    border-top: none;
+  }
+  #user-table .row .cell {
+    flex: 1;
+  }
+  #user-table .row .column-head {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .hidden {
+    display: none !important;
+  }
+</style>
+
+<body>
+  <div id="user-table">
+    <div class="row top-row">
+      <div class="cell column-head">Name</div>
+      <div class="cell column-head">Business</div>
+      <div class="cell column-head">Website</div>
+    </div>
+    <div class="loading row">Loading data...</div>
+  </div>
+</body>
